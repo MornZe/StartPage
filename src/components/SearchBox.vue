@@ -232,7 +232,6 @@ defineExpose({
 .search-wrapper {
   position: relative;
   width: 600px;
-  isolation: isolate;
 }
 
 .search {
@@ -356,7 +355,7 @@ defineExpose({
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(30px) saturate(1.2);
   -webkit-backdrop-filter: blur(30px) saturate(1.2);
   border-radius: 12px;
@@ -364,7 +363,7 @@ defineExpose({
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
   z-index: 100;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .dropdown-header {
