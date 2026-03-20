@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
+  css: {
+    devSourcemap: true
+  },
   server: {
     proxy: {
       '/api/hot-search': {
