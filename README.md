@@ -1,4 +1,5 @@
 # MornStartPage
+## 本仓库永久停更，后续更新发布在：https://cnb.cool/MornZe-Dev/StartPage
 
 基于 Vue 开发的浏览器起始页，以极简设计语言营造私密、静谧的浏览体验，让每一次打开都是优雅的回归。
 
