@@ -80,17 +80,18 @@ onMounted(() => {
 </template>
 
 <style>
+/* 全局样式 - 修复生产环境 backdrop-filter 失效
+   注意：必须同时保留 backdrop-filter 和 -webkit-backdrop-filter
+   且 backdrop-filter 必须放在 -webkit-backdrop-filter 之后 */
 .hot-list-card {
-  backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
 }
 </style>
 
 <style scoped>
 .hot-list-card {
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
