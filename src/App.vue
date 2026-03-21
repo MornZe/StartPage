@@ -93,8 +93,6 @@ onMounted(() => {
       </div>
 
       <Hitokoto />
-
-      <div class="footer"></div>
     </div>
   </div>
 </template>
@@ -146,33 +144,27 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: translateY(-20px);
+  transform: translateY(-10px);
   position: relative;
   z-index: 60;
   width: 100%;
   max-width: 800px;
+  gap: 12px;
 }
 
 .hot-cards {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
-  margin: 20px 0;
+  margin: 8px 0;
+  max-width: 700px;
 }
 
 .hot-cards .hot-card-wrapper {
   flex: 1;
   min-width: 0;
-}
-
-.footer {
-  margin-top: 40px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  max-width: 340px;
 }
 
 /* 移动端响应式布局 */

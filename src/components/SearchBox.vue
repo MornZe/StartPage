@@ -222,24 +222,6 @@ defineExpose({
   </div>
 </template>
 
-<style>
-/* 全局样式 - 修复生产环境 backdrop-filter 失效 
-   注意：必须同时保留 backdrop-filter 和 -webkit-backdrop-filter
-   且 backdrop-filter 必须放在 -webkit-backdrop-filter 之后 */
-.search-wrapper .search {
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  backdrop-filter: blur(20px) saturate(1.2);
-}
-.search-wrapper .search.focus {
-  -webkit-backdrop-filter: blur(30px) saturate(1.2);
-  backdrop-filter: blur(30px) saturate(1.2);
-}
-.search-wrapper .dropdown {
-  -webkit-backdrop-filter: blur(30px) saturate(1.2);
-  backdrop-filter: blur(30px) saturate(1.2);
-}
-</style>
-
 <style scoped>
 .search-wrapper {
   position: relative;
@@ -250,8 +232,6 @@ defineExpose({
   display: flex;
   align-items: center;
   background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-radius: 999px;
   padding: 4px 6px;
   transition: all 0.3s ease;
@@ -268,8 +248,6 @@ defineExpose({
 
 .search.focus {
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
   border-color: rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 }
@@ -337,8 +315,6 @@ defineExpose({
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(30px) saturate(1.2);
-  -webkit-backdrop-filter: blur(30px) saturate(1.2);
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);

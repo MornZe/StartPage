@@ -1,0 +1,46 @@
+/**
+ * 全局 backdrop-filter 样式
+ * 
+ * 修复生产环境 backdrop-filter 失效问题：
+ * - 必须同时保留 backdrop-filter 和 -webkit-backdrop-filter
+ * - backdrop-filter 必须放在 -webkit-backdrop-filter 之后
+ */
+
+/* 搜索框 */
+.search-wrapper .search {
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.search-wrapper .search.focus {
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  backdrop-filter: blur(30px) saturate(1.2);
+}
+
+.search-wrapper .dropdown {
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  backdrop-filter: blur(30px) saturate(1.2);
+}
+
+/* 热榜卡片 */
+.hot-list-card {
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+}
+
+/* 搜索引擎切换器 */
+.engines {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.engine-active-bg {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+/* 天气组件 */
+.weather-bg {
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+}
