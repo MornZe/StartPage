@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Icon } from '@iconify/vue'
 import Clock from './components/Clock.vue'
 import EngineSwitch from './components/EngineSwitch.vue'
 import SearchBox from './components/SearchBox.vue'
 import HotSearch from './components/HotSearch.vue'
+import BiliBiliHot from './components/BiliBiliHot.vue'
 import Hitokoto from './components/Hitokoto.vue'
 
 interface SearchEngine {
@@ -14,13 +14,15 @@ interface SearchEngine {
 }
 
 const engines: SearchEngine[] = [
-  { name: '必应', url: 'https://bing.com/search?q=', placeholder: '在 Bing 中搜索...' },
+  { name: 'Bing', url: 'https://bing.com/search?q=', placeholder: '在 Bing 中搜索...' },
+  { name: 'Google', url: 'https://google.com/search?q=', placeholder: 'Google 带你了解世界...' },
   { name: '百度', url: 'https://baidu.com/s?wd=', placeholder: '百度一下，你就知道...' },
   { name: '搜狗', url: 'https://sogou.com/web?query=', placeholder: '上网从搜狗开始...' }
 ]
 
 const currentEngineIndex = ref(0)
 const showHotSearch = ref(false)
+const showBiliBili = ref(false)
 
 const searchBoxRef = ref<InstanceType<typeof SearchBox> | null>(null)
 
@@ -30,6 +32,10 @@ const switchEngine = (index: number) => {
 
 const toggleHotSearch = () => {
   showHotSearch.value = !showHotSearch.value
+}
+
+const toggleBiliBili = () => {
+  showBiliBili.value = !showBiliBili.value
 }
 
 const handleSearch = (query: string) => {
@@ -43,9 +49,25 @@ const handleKeydown = (e: KeyboardEvent) => {
   }
 }
 
+const loadBingBg = async () => {
+  try {
+    const res = await fetch('/api/bing-wallpaper')
+    const data = await res.json()
+    const image = data.images[0]
+    const imgUrl = 'https://cn.bing.com' + image.url
+    const bg = document.getElementById('bg')
+    if (bg) {
+      bg.style.background = `url('${imgUrl}') center/cover no-repeat`
+    }
+  } catch (e) {
+    console.error('Bing 壁纸加载失败:', e)
+  }
+}
+
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
   searchBoxRef.value?.loadHistory()
+  loadBingBg()
 })
 </script>
 
@@ -67,22 +89,21 @@ onMounted(() => {
         :engines="engines"
         :current-engine-index="currentEngineIndex"
         :show-hot-search="showHotSearch"
+        :show-bili-bili="showBiliBili"
         @engine-switch="switchEngine"
         @history-select="handleSearch"
         @suggestion-select="handleSearch"
         @toggle-hot-search="toggleHotSearch"
+        @toggle-bili-bili="toggleBiliBili"
       />
 
       <HotSearch :visible="showHotSearch" @close="showHotSearch = false" />
+      <BiliBiliHot :visible="showBiliBili" @close="showBiliBili = false" />
     </div>
 
     <Hitokoto />
 
-    <div class="footer">
-      <span>本站由</span>
-      <Icon icon="logos:vercel" width="60" height="20" />
-      <span>Serverless Function 强力驱动</span>
-    </div>
+    <div class="footer"></div>
   </div>
 </template>
 
@@ -91,19 +112,25 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  padding: 0;
   overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
   color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+#app {
+  width: 100%;
+  height: 100%;
+}
+
 #bg {
   position: fixed;
   inset: 0;
-  background: url('https://cn.bing.com/th?id=OHR.SunbeamsForest_ZH-CN5358008117_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp') center/cover;
   z-index: -2;
 }
 

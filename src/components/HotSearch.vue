@@ -4,7 +4,6 @@ import { ref, watch } from 'vue'
 interface HotSearchItem {
   word: string
   index?: number
-  isTop?: boolean
   url: string
   hotTag?: string
   newHotName?: string
@@ -66,8 +65,12 @@ const selectHotSearch = (item: HotSearchItem) => {
       class="dropdown-item hot-search-item"
       @click="selectHotSearch(item)"
     >
-      <span class="hot-index" :class="{ 'is-top': item.isTop, 'is-gold': index >= 1 && index <= 3 }">
-        {{ item.isTop ? 'TOP' : (index + 1) }}
+      <span class="hot-index" :class="{
+        'is-first': index === 0,
+        'is-second': index === 1,
+        'is-third': index === 2
+      }">
+        {{ index + 1 }}
       </span>
       <span class="hot-word">{{ item.word }}</span>
       <span v-if="item.newHotName" class="hot-tag new">{{ item.newHotName }}</span>
@@ -157,14 +160,18 @@ const selectHotSearch = (item: HotSearchItem) => {
   flex-shrink: 0;
 }
 
-.hot-index.is-top {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+.hot-index.is-first {
+  background: #ff4d4d;
   color: white;
-  font-size: 11px;
 }
 
-.hot-index.is-gold {
-  background: linear-gradient(135deg, #ffd700, #ffb800);
+.hot-index.is-second {
+  background: #ff9f43;
+  color: white;
+}
+
+.hot-index.is-third {
+  background: #feca57;
   color: white;
 }
 

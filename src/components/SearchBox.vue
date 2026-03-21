@@ -12,6 +12,7 @@ interface Props {
   engines: SearchEngine[]
   currentEngineIndex: number
   showHotSearch: boolean
+  showBiliBili: boolean
 }
 
 const props = defineProps<Props>()
@@ -20,6 +21,7 @@ const emit = defineEmits<{
   'history-select': [query: string]
   'suggestion-select': [query: string]
   'toggle-hot-search': []
+  'toggle-bili-bili': []
 }>()
 
 const searchInput = ref('')
@@ -198,6 +200,9 @@ defineExpose({
       <div class="hot-search-btn" @click.stop="emit('toggle-hot-search')" :class="{ active: props.showHotSearch }">
         <Icon icon="mdi:fire" width="18" height="18" />
       </div>
+      <div class="bili-search-btn" @click.stop="emit('toggle-bili-bili')" :class="{ active: props.showBiliBili }">
+        <Icon icon="mdi:television" width="18" height="18" />
+      </div>
     </div>
 
     <div v-if="showHistory" class="dropdown history-dropdown">
@@ -288,7 +293,7 @@ defineExpose({
   padding: 8px 12px;
   width: 100%;
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 500;
   height: 100%;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
@@ -367,6 +372,39 @@ defineExpose({
 }
 
 .search.focus .hot-search-btn.active {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.bili-search-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  color: white;
+}
+
+.bili-search-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.search.focus .bili-search-btn {
+  color: #333;
+}
+
+.search.focus .bili-search-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.bili-search-btn.active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.search.focus .bili-search-btn.active {
   background: rgba(0, 0, 0, 0.15);
 }
 

@@ -48,7 +48,7 @@ onMounted(() => {
   font-size: 15px;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.6;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }

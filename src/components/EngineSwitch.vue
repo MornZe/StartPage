@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+
 interface SearchEngine {
   name: string
   url: string
@@ -10,11 +12,23 @@ interface Props {
   currentEngineIndex: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   switch: [index: number]
 }>()
+
+const engineRefs = ref<HTMLElement[]>([])
+
+const activeBgStyle = computed(() => {
+  const activeEl = engineRefs.value[props.currentEngineIndex]
+  if (!activeEl) return {}
+  
+  return {
+    width: `${activeEl.offsetWidth}px`,
+    transform: `translateX(${activeEl.offsetLeft - 4}px)`
+  }
+})
 
 const switchEngine = (index: number) => {
   emit('switch', index)
@@ -28,48 +42,70 @@ const switchEngine = (index: number) => {
       :key="engine.name"
       :class="['engine-item', { active: index === currentEngineIndex }]"
       @click="switchEngine(index)"
+      ref="engineRefs"
     >
-      {{ engine.name }}
+      <span class="engine-name">{{ engine.name }}</span>
     </div>
+    <div 
+      class="engine-active-bg" 
+      :style="activeBgStyle"
+    ></div>
   </div>
 </template>
 
 <style scoped>
 .engines {
   display: flex;
-  gap: 20px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
   font-size: 13px;
-  opacity: 0.9;
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .engine-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
-  padding: 4px 8px;
-  border-radius: 6px;
   position: relative;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
 .engine-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .engine-item.active {
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.engine-item.active::after {
-  content: '';
+.engine-active-bg {
   position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 2px;
-  background: white;
-  border-radius: 1px;
+  top: 4px;
+  left: 4px;
+  height: calc(100% - 8px);
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 </style>
