@@ -3,9 +3,9 @@ import { ref, onMounted } from 'vue'
 import Clock from './components/Clock.vue'
 import EngineSwitch from './components/EngineSwitch.vue'
 import SearchBox from './components/SearchBox.vue'
-import HotSearch from './components/HotSearch.vue'
-import BiliBiliHot from './components/BiliBiliHot.vue'
 import Hitokoto from './components/Hitokoto.vue'
+import BaiduHot from './components/BaiduHot.vue'
+import BiliBiliHotCard from './components/BiliBiliHotCard.vue'
 
 interface SearchEngine {
   name: string
@@ -21,21 +21,11 @@ const engines: SearchEngine[] = [
 ]
 
 const currentEngineIndex = ref(0)
-const showHotSearch = ref(false)
-const showBiliBili = ref(false)
 
 const searchBoxRef = ref<InstanceType<typeof SearchBox> | null>(null)
 
 const switchEngine = (index: number) => {
   currentEngineIndex.value = index
-}
-
-const toggleHotSearch = () => {
-  showHotSearch.value = !showHotSearch.value
-}
-
-const toggleBiliBili = () => {
-  showBiliBili.value = !showBiliBili.value
 }
 
 const handleSearch = (query: string) => {
@@ -74,36 +64,38 @@ onMounted(() => {
 <template>
   <div id="bg"></div>
 
-  <div class="center">
-    <Clock />
+  <div class="main-container">
+    <div class="center">
+      <Clock />
 
-    <EngineSwitch
-      :engines="engines"
-      :current-engine-index="currentEngineIndex"
-      @switch="switchEngine"
-    />
+      <EngineSwitch
+        :engines="engines"
+        :current-engine-index="currentEngineIndex"
+        @switch="switchEngine"
+      />
 
-    <div class="search-container">
       <SearchBox
         ref="searchBoxRef"
         :engines="engines"
         :current-engine-index="currentEngineIndex"
-        :show-hot-search="showHotSearch"
-        :show-bili-bili="showBiliBili"
         @engine-switch="switchEngine"
         @history-select="handleSearch"
         @suggestion-select="handleSearch"
-        @toggle-hot-search="toggleHotSearch"
-        @toggle-bili-bili="toggleBiliBili"
       />
 
-      <HotSearch :visible="showHotSearch" @close="showHotSearch = false" />
-      <BiliBiliHot :visible="showBiliBili" @close="showBiliBili = false" />
+      <div class="hot-cards">
+        <div class="hot-card-wrapper">
+          <BaiduHot title="百度热榜" />
+        </div>
+        <div class="hot-card-wrapper">
+          <BiliBiliHotCard title="B 站热门" />
+        </div>
+      </div>
+
+      <Hitokoto />
+
+      <div class="footer"></div>
     </div>
-
-    <Hitokoto />
-
-    <div class="footer"></div>
   </div>
 </template>
 
@@ -123,6 +115,12 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (max-width: 1024px) {
+  html, body {
+    overflow: auto;
+  }
+}
+
 #app {
   width: 100%;
   height: 100%;
@@ -134,21 +132,38 @@ html, body {
   z-index: -2;
 }
 
-.center {
+.main-container {
   height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 40px;
+  overflow: visible;
+}
+
+.center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: translateY(-40px);
+  transform: translateY(-20px);
   position: relative;
   z-index: 60;
+  width: 100%;
+  max-width: 800px;
 }
 
-.search-container {
-  position: relative;
+.hot-cards {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.hot-cards .hot-card-wrapper {
+  flex: 1;
+  min-width: 0;
 }
 
 .footer {
@@ -158,6 +173,34 @@ html, body {
   gap: 6px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
+}
+
+/* 移动端响应式布局 */
+@media (max-width: 1024px) {
+  .main-container {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 40px;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .center {
+    transform: none;
+    margin-top: 20px;
+  }
+
+  .hot-cards {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .hot-cards .hot-card-wrapper {
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -172,6 +215,11 @@ html, body {
 
   .search {
     height: 40px;
+  }
+
+  .main-container {
+    padding: 20px 16px;
+    padding-top: 30px;
   }
 }
 </style>

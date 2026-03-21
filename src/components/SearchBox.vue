@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Icon } from '@iconify/vue'
 
 interface SearchEngine {
   name: string
@@ -11,8 +10,6 @@ interface SearchEngine {
 interface Props {
   engines: SearchEngine[]
   currentEngineIndex: number
-  showHotSearch: boolean
-  showBiliBili: boolean
 }
 
 const props = defineProps<Props>()
@@ -20,8 +17,6 @@ const emit = defineEmits<{
   'engine-switch': [index: number]
   'history-select': [query: string]
   'suggestion-select': [query: string]
-  'toggle-hot-search': []
-  'toggle-bili-bili': []
 }>()
 
 const searchInput = ref('')
@@ -197,12 +192,6 @@ defineExpose({
           <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/>
         </svg>
       </div>
-      <div class="hot-search-btn" @click.stop="emit('toggle-hot-search')" :class="{ active: props.showHotSearch }">
-        <Icon icon="mdi:fire" width="18" height="18" />
-      </div>
-      <div class="bili-search-btn" @click.stop="emit('toggle-bili-bili')" :class="{ active: props.showBiliBili }">
-        <Icon icon="mdi:television" width="18" height="18" />
-      </div>
     </div>
 
     <div v-if="showHistory" class="dropdown history-dropdown">
@@ -260,7 +249,7 @@ defineExpose({
 .search {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 999px;
@@ -340,72 +329,6 @@ defineExpose({
 .search.focus svg {
   fill: #333;
   filter: none;
-}
-
-.hot-search-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  color: white;
-}
-
-.hot-search-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.search.focus .hot-search-btn {
-  color: #333;
-}
-
-.search.focus .hot-search-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.hot-search-btn.active {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.search.focus .hot-search-btn.active {
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.bili-search-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  color: white;
-}
-
-.bili-search-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.search.focus .bili-search-btn {
-  color: #333;
-}
-
-.search.focus .bili-search-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.bili-search-btn.active {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.search.focus .bili-search-btn.active {
-  background: rgba(0, 0, 0, 0.15);
 }
 
 .dropdown {

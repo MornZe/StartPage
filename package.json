@@ -11,6 +11,7 @@
   "dependencies": {
     "@iconify-json/logos": "^1.2.10",
     "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/simple-icons": "^1.2.74",
     "@iconify/vue": "^5.0.0",
     "vue": "^3.5.30"
   },
