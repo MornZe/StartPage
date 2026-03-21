@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import Clock from './components/Clock.vue'
 import EngineSwitch from './components/EngineSwitch.vue'
 import SearchBox from './components/SearchBox.vue'
-import Hitokoto from './components/Hitokoto.vue'
 import BaiduHot from './components/BaiduHot.vue'
 import BiliBiliHotCard from './components/BiliBiliHotCard.vue'
 
@@ -91,8 +90,6 @@ onMounted(() => {
           <BiliBiliHotCard title="B 站热门" />
         </div>
       </div>
-
-      <Hitokoto />
     </div>
   </div>
 </template>
@@ -136,20 +133,21 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: 20px 40px;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  transform: translateY(-10px);
+  justify-content: flex-start;
   position: relative;
   z-index: 60;
   width: 100%;
   max-width: 800px;
-  gap: 12px;
+  gap: 16px;
+  padding: 20px 0;
 }
 
 .hot-cards {
@@ -157,7 +155,7 @@ html, body {
   flex-direction: row;
   gap: 16px;
   width: 100%;
-  margin: 8px 0;
+  margin: 4px 0;
   max-width: 700px;
 }
 
@@ -172,7 +170,7 @@ html, body {
   .main-container {
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 40px;
+    padding-top: 30px;
     height: auto;
     min-height: 100vh;
     overflow-y: auto;
@@ -181,17 +179,20 @@ html, body {
 
   .center {
     transform: none;
-    margin-top: 20px;
+    margin-top: 0;
+    gap: 12px;
   }
 
   .hot-cards {
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     width: 100%;
+    max-width: none;
   }
 
   .hot-cards .hot-card-wrapper {
     width: 100%;
+    max-width: none;
   }
 }
 

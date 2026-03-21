@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue'
 const time = ref('')
 const date = ref('')
 const weather = ref<{ location: { name: string }; now: { text: string; temperature: string } } | null>(null)
-const loading = ref(true)
+const hitokotoText = ref('')
 
 const updateTime = () => {
   const now = new Date()
@@ -22,8 +22,16 @@ const loadWeather = async () => {
     }
   } catch {
     weather.value = null
-  } finally {
-    loading.value = false
+  }
+}
+
+const loadHitokoto = async () => {
+  try {
+    const res = await fetch('https://v1.hitokoto.cn/?c=d')
+    const data = await res.json()
+    hitokotoText.value = data.hitokoto
+  } catch {
+    hitokotoText.value = '保持热爱，奔赴山海'
   }
 }
 
@@ -31,17 +39,23 @@ onMounted(() => {
   updateTime()
   setInterval(updateTime, 1000)
   loadWeather()
+  loadHitokoto()
 })
 </script>
 
 <template>
   <div class="time">{{ time }}</div>
   <div class="date-row">
-    <div class="date">{{ date }}</div>
-    <div class="weather" v-if="!loading && weather">
-      <span class="weather-bg">
-        <span class="weather-text">{{ weather.location.name }} {{ weather.now.text }} {{ weather.now.temperature }}°C</span>
-      </span>
+    <div class="date-weather">
+      <div class="date">{{ date }}</div>
+      <div class="weather" v-if="weather">
+        <span class="weather-bg">
+          <span class="weather-text">{{ weather.location.name }} {{ weather.now.text }} {{ weather.now.temperature }}°C</span>
+        </span>
+      </div>
+    </div>
+    <div class="hitokoto">
+      <div class="hitokoto-text">{{ hitokotoText || '加载中...' }}</div>
     </div>
   </div>
 </template>
@@ -57,6 +71,7 @@ onMounted(() => {
 
 .date-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: 0.8;
@@ -66,6 +81,14 @@ onMounted(() => {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  gap: 8px;
+}
+
+.date-weather {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .date {
@@ -93,5 +116,20 @@ onMounted(() => {
 .weather-text {
   position: relative;
   z-index: 1;
+}
+
+.hitokoto {
+  max-width: 400px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hitokoto-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
 }
 </style>
