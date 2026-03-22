@@ -332,11 +332,6 @@ html, body {
     font-size: 3.5rem;
   }
 
-  .search-wrapper {
-    width: 90%;
-    max-width: 400px;
-  }
-
   .search {
     height: 40px;
   }
@@ -344,6 +339,18 @@ html, body {
   .main-container {
     padding: 20px 16px;
     padding-top: 30px;
+  }
+}
+
+/* Zen 模式响应式适配 */
+.main-container.zen-mode .search-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+@media (max-width: 480px) {
+  .main-container.zen-mode .search-wrapper {
+    max-width: 100%;
   }
 }
 </style>
