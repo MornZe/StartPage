@@ -86,9 +86,10 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
 .card-header {
@@ -119,7 +120,6 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 2px 4px;
-  max-height: 260px;
 }
 
 .card-content::-webkit-scrollbar {

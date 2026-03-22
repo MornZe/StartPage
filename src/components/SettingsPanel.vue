@@ -3,13 +3,15 @@ import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 
 interface Settings {
-  showHotList: boolean
   showHitokoto: boolean
   customHitokoto: string
   showCustomBg: boolean
   bgType: 'url' | 'file'
   bgUrl: string
   zenMode: boolean
+  showBaiduHot: boolean
+  showBiliHot: boolean
+  showHot60s: boolean
 }
 
 const props = defineProps<{
@@ -86,14 +88,38 @@ const closePanel = () => {
           </div>
 
           <div class="settings-content">
-            <!-- 热榜开关 -->
+            <!-- 60s 热榜开关 -->
             <div class="setting-item">
               <div class="setting-label">
-                <Icon icon="mdi:fire" width="18" height="18" />
-                <span>显示热榜</span>
+                <Icon icon="mdi:newspaper" width="18" height="18" />
+                <span>60s 读懂世界</span>
               </div>
               <label class="switch">
-                <input type="checkbox" v-model="settings.showHotList" />
+                <input type="checkbox" v-model="settings.showHot60s" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- 百度热榜开关 -->
+            <div class="setting-item">
+              <div class="setting-label">
+                <Icon icon="simple-icons:baidu" width="18" height="18" />
+                <span>百度热榜</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" v-model="settings.showBaiduHot" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- B 站热榜开关 -->
+            <div class="setting-item">
+              <div class="setting-label">
+                <Icon icon="simple-icons:bilibili" width="18" height="18" />
+                <span>B 站热门</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" v-model="settings.showBiliHot" />
                 <span class="slider"></span>
               </label>
             </div>

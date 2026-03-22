@@ -5,6 +5,7 @@ import EngineSwitch from './components/EngineSwitch.vue'
 import SearchBox from './components/SearchBox.vue'
 import BaiduHot from './components/BaiduHot.vue'
 import BiliBiliHotCard from './components/BiliBiliHotCard.vue'
+import Hot60s from './components/Hot60s.vue'
 import SettingsPanel from './components/SettingsPanel.vue'
 
 interface SearchEngine {
@@ -14,7 +15,6 @@ interface SearchEngine {
 }
 
 interface Settings {
-  showHotList: boolean
   showHitokoto: boolean
   customHitokoto: string
   showWeather: boolean
@@ -23,6 +23,9 @@ interface Settings {
   bgType: 'url' | 'file'
   bgUrl: string
   zenMode: boolean
+  showBaiduHot: boolean
+  showBiliHot: boolean
+  showHot60s: boolean
 }
 
 const engines: SearchEngine[] = [
@@ -37,13 +40,15 @@ const searchBoxRef = ref<InstanceType<typeof SearchBox> | null>(null)
 
 // 设置相关
 const defaultSettings: Settings = {
-  showHotList: false,
   showHitokoto: true,
   customHitokoto: '',
   showCustomBg: false,
   bgType: 'url',
   bgUrl: '',
-  zenMode: false
+  zenMode: false,
+  showBaiduHot: false,
+  showBiliHot: false,
+  showHot60s: false
 }
 
 const settings = ref<Settings>({ ...defaultSettings })
@@ -149,11 +154,14 @@ onMounted(() => {
         />
       </div>
 
-      <div v-if="!isZenMode && settings.showHotList" class="hot-cards">
-        <div class="hot-card-wrapper">
+      <div v-if="!isZenMode" class="hot-cards">
+        <div class="hot-card-wrapper" v-if="settings.showHot60s">
+          <Hot60s title="60s 读懂世界" />
+        </div>
+        <div class="hot-card-wrapper" v-if="settings.showBaiduHot">
           <BaiduHot title="百度热榜" />
         </div>
-        <div class="hot-card-wrapper">
+        <div class="hot-card-wrapper" v-if="settings.showBiliHot">
           <BiliBiliHotCard title="B 站热门" />
         </div>
       </div>
@@ -239,14 +247,17 @@ html, body {
   gap: 16px;
   width: 100%;
   margin-top: 24px;
-  max-width: 700px;
+  max-width: 900px;
   flex-shrink: 0;
+  align-items: stretch;
 }
 
 .hot-cards .hot-card-wrapper {
   flex: 1;
   min-width: 0;
-  max-width: 340px;
+  max-width: 280px;
+  display: flex;
+  height: 320px;
 }
 
 /* Zen 模式样式 */
@@ -288,17 +299,29 @@ html, body {
   }
 
   .hot-cards {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    gap: 12px;
     width: 100%;
     max-width: none;
     margin-top: 48px;
     margin-bottom: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .hot-cards::-webkit-scrollbar {
+    display: none;
   }
 
   .hot-cards .hot-card-wrapper {
-    width: 100%;
-    max-width: none;
+    flex: 0 0 auto;
+    width: 260px;
+    max-width: 260px;
+    scroll-snap-align: center;
   }
 }
 
