@@ -12,7 +12,8 @@ MornStartPage 想提供另一种选择：一个真正内外如一的极简起始
 
 ---
 
-[截图占位]
+![d1b4d83f07c1982f.png](https://fastly.jsdelivr.net/gh/MornZe/Blog-Static-Resource@main/images/d1b4d83f07c1982f.png)
+![6215abc0676659e2.png](https://fastly.jsdelivr.net/gh/MornZe/Blog-Static-Resource@main/images/6215abc0676659e2.png)
 
 ---
 
