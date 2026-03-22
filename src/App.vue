@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import Clock from './components/Clock.vue'
 import EngineSwitch from './components/EngineSwitch.vue'
 import SearchBox from './components/SearchBox.vue'
 import BaiduHot from './components/BaiduHot.vue'
 import BiliBiliHotCard from './components/BiliBiliHotCard.vue'
+import SettingsPanel from './components/SettingsPanel.vue'
 
 interface SearchEngine {
   name: string
   url: string
   placeholder: string
+}
+
+interface Settings {
+  showHotList: boolean
+  showHitokoto: boolean
+  customHitokoto: string
+  showWeather: boolean
+  weatherCounty: string
+  showCustomBg: boolean
+  bgType: 'url' | 'file'
+  bgUrl: string
+  zenMode: boolean
 }
 
 const engines: SearchEngine[] = [
@@ -20,9 +33,72 @@ const engines: SearchEngine[] = [
 ]
 
 const currentEngineIndex = ref(0)
-
 const searchBoxRef = ref<InstanceType<typeof SearchBox> | null>(null)
 
+// 设置相关
+const defaultSettings: Settings = {
+  showHotList: false,
+  showHitokoto: true,
+  customHitokoto: '',
+  showCustomBg: false,
+  bgType: 'url',
+  bgUrl: '',
+  zenMode: false
+}
+
+const settings = ref<Settings>({ ...defaultSettings })
+const settingsVisible = ref(false)
+
+// 加载设置
+const loadSettings = () => {
+  const saved = localStorage.getItem('mornstart_settings')
+  if (saved) {
+    try {
+      settings.value = { ...defaultSettings, ...JSON.parse(saved) }
+    } catch {
+      settings.value = { ...defaultSettings }
+    }
+  }
+}
+
+// 背景处理
+const applyBackground = () => {
+  const bg = document.getElementById('bg')
+  if (!bg) return
+
+  if (settings.value.showCustomBg && settings.value.bgUrl) {
+    bg.style.background = `url('${settings.value.bgUrl}') center/cover no-repeat`
+  } else {
+    // 恢复默认 Bing 壁纸
+    loadBingBg()
+  }
+}
+
+const loadBingBg = async () => {
+  if (settings.value.showCustomBg && settings.value.bgUrl) return
+
+  try {
+    const res = await fetch('/api/bing-wallpaper')
+    const data = await res.json()
+    const image = data.images[0]
+    const imgUrl = 'https://cn.bing.com' + image.url
+    const bg = document.getElementById('bg')
+    if (bg) {
+      bg.style.background = `url('${imgUrl}') center/cover no-repeat`
+    }
+  } catch (e) {
+    console.error('Bing 壁纸加载失败:', e)
+  }
+}
+
+// Zen 模式相关
+const isZenMode = computed(() => settings.value.zenMode)
+
+// 监听设置变化
+watch(() => settings.value.showCustomBg, applyBackground)
+watch(() => settings.value.bgUrl, applyBackground)
+
+// 事件处理
 const switchEngine = (index: number) => {
   currentEngineIndex.value = index
 }
@@ -38,51 +114,42 @@ const handleKeydown = (e: KeyboardEvent) => {
   }
 }
 
-const loadBingBg = async () => {
-  try {
-    const res = await fetch('/api/bing-wallpaper')
-    const data = await res.json()
-    const image = data.images[0]
-    const imgUrl = 'https://cn.bing.com' + image.url
-    const bg = document.getElementById('bg')
-    if (bg) {
-      bg.style.background = `url('${imgUrl}') center/cover no-repeat`
-    }
-  } catch (e) {
-    console.error('Bing 壁纸加载失败:', e)
-  }
-}
-
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
   searchBoxRef.value?.loadHistory()
-  loadBingBg()
+  loadSettings()
+  applyBackground()
 })
 </script>
 
 <template>
   <div id="bg"></div>
 
-  <div class="main-container">
-    <div class="center">
-      <Clock />
+  <div :class="['main-container', { 'zen-mode': isZenMode }]">
+    <div class="content-wrapper">
+      <div class="center">
+        <Clock :hide-date="isZenMode" />
 
-      <EngineSwitch
-        :engines="engines"
-        :current-engine-index="currentEngineIndex"
-        @switch="switchEngine"
-      />
+        <EngineSwitch
+          v-if="!isZenMode"
+          :engines="engines"
+          :current-engine-index="currentEngineIndex"
+          @switch="switchEngine"
+        />
 
-      <SearchBox
-        ref="searchBoxRef"
-        :engines="engines"
-        :current-engine-index="currentEngineIndex"
-        @engine-switch="switchEngine"
-        @history-select="handleSearch"
-        @suggestion-select="handleSearch"
-      />
+        <SearchBox
+          ref="searchBoxRef"
+          :engines="engines"
+          :current-engine-index="currentEngineIndex"
+          :show-settings="true"
+          @engine-switch="switchEngine"
+          @history-select="handleSearch"
+          @suggestion-select="handleSearch"
+          @settings-click="settingsVisible = true"
+        />
+      </div>
 
-      <div class="hot-cards">
+      <div v-if="!isZenMode && settings.showHotList" class="hot-cards">
         <div class="hot-card-wrapper">
           <BaiduHot title="百度热榜" />
         </div>
@@ -92,6 +159,13 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <SettingsPanel
+    :settings="settings"
+    :visible="settingsVisible"
+    @update:settings="settings = $event"
+    @update:visible="settingsVisible = $event"
+  />
 </template>
 
 <style>
@@ -137,11 +211,20 @@ html, body {
   overflow-x: hidden;
 }
 
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+}
+
 .center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   position: relative;
   z-index: 60;
   width: 100%;
@@ -155,8 +238,9 @@ html, body {
   flex-direction: row;
   gap: 16px;
   width: 100%;
-  margin: 4px 0;
+  margin-top: 24px;
   max-width: 700px;
+  flex-shrink: 0;
 }
 
 .hot-cards .hot-card-wrapper {
@@ -165,16 +249,36 @@ html, body {
   max-width: 340px;
 }
 
-/* 移动端响应式布局 */
+/* Zen 模式样式 */
+.main-container.zen-mode {
+  padding: 0;
+}
+
+.main-container.zen-mode .center {
+  gap: 24px;
+}
+
+.main-container.zen-mode .hot-cards {
+  display: none;
+}
+
+/* 响应式布局 */
 @media (max-width: 1024px) {
   .main-container {
     flex-direction: column;
-    justify-content: flex-start;
-    padding-top: 30px;
+    justify-content: center;
+    padding: 40px 20px;
     height: auto;
     min-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  .content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .center {
@@ -188,6 +292,8 @@ html, body {
     gap: 16px;
     width: 100%;
     max-width: none;
+    margin-top: 48px;
+    margin-bottom: 20px;
   }
 
   .hot-cards .hot-card-wrapper {

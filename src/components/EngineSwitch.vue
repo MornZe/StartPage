@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 
 interface SearchEngine {
   name: string
@@ -18,20 +18,35 @@ const emit = defineEmits<{
   switch: [index: number]
 }>()
 
-const engineRefs = ref<HTMLElement[]>([])
+const engineRefs = ref<(HTMLElement | null)[]>([])
+const bgStyle = ref({ width: '0px', transform: 'translateX(0)' })
 
-const activeBgStyle = computed(() => {
+const updateBgPosition = () => {
   const activeEl = engineRefs.value[props.currentEngineIndex]
-  if (!activeEl) return {}
-  
-  return {
+  if (!activeEl) return
+
+  bgStyle.value = {
     width: `${activeEl.offsetWidth}px`,
-    transform: `translateX(${activeEl.offsetLeft - 4}px)`
+    transform: `translateX(${activeEl.offsetLeft}px)`
   }
+}
+
+onMounted(() => {
+  updateBgPosition()
+})
+
+watch(() => props.currentEngineIndex, () => {
+  nextTick(() => {
+    updateBgPosition()
+  })
 })
 
 const switchEngine = (index: number) => {
   emit('switch', index)
+}
+
+const setEngineRef = (el: HTMLElement | null, index: number) => {
+  engineRefs.value[index] = el
 }
 </script>
 
@@ -42,13 +57,13 @@ const switchEngine = (index: number) => {
       :key="engine.name"
       :class="['engine-item', { active: index === currentEngineIndex }]"
       @click="switchEngine(index)"
-      ref="engineRefs"
+      :ref="(el) => setEngineRef(el, index)"
     >
       <span class="engine-name">{{ engine.name }}</span>
     </div>
-    <div 
-      class="engine-active-bg" 
-      :style="activeBgStyle"
+    <div
+      class="engine-active-bg"
+      :style="bgStyle"
     ></div>
   </div>
 </template>
@@ -95,7 +110,7 @@ const switchEngine = (index: number) => {
 .engine-active-bg {
   position: absolute;
   top: 4px;
-  left: 4px;
+  left: 0;
   height: calc(100% - 8px);
   background: rgba(255, 255, 255, 0.25);
   border-radius: 16px;

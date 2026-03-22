@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const time = ref('')
 const date = ref('')
 const weather = ref<{ location: { name: string }; now: { text: string; temperature: string } } | null>(null)
 const hitokotoText = ref('')
+
+defineProps<{
+  hideDate?: boolean
+}>()
 
 const updateTime = () => {
   const now = new Date()
@@ -26,12 +30,51 @@ const loadWeather = async () => {
 }
 
 const loadHitokoto = async () => {
+  const settingsStr = localStorage.getItem('mornstart_settings')
+  
+  // 没有设置时，默认显示一言
+  if (!settingsStr) {
+    try {
+      const res = await fetch('https://v1.hitokoto.cn', {
+        cache: 'no-cache'
+      })
+      const data = await res.json()
+      hitokotoText.value = data.hitokoto
+      return
+    } catch {
+      hitokotoText.value = '保持热爱，奔赴山海'
+      return
+    }
+  }
+  
   try {
-    const res = await fetch('https://v1.hitokoto.cn/?c=d')
-    const data = await res.json()
-    hitokotoText.value = data.hitokoto
+    const settings = JSON.parse(settingsStr)
+    if (settings.showHitokoto) {
+      if (settings.customHitokoto) {
+        hitokotoText.value = settings.customHitokoto
+        return
+      }
+      try {
+        const res = await fetch('https://v1.hitokoto.cn', {
+          cache: 'no-cache'
+        })
+        const data = await res.json()
+        hitokotoText.value = data.hitokoto
+      } catch {
+        hitokotoText.value = '保持热爱，奔赴山海'
+      }
+    } else {
+      hitokotoText.value = ''
+    }
   } catch {
     hitokotoText.value = '保持热爱，奔赴山海'
+  }
+}
+
+// 监听设置变化
+const handleStorageChange = (e?: StorageEvent) => {
+  if (!e || e.key === 'mornstart_settings') {
+    loadHitokoto()
   }
 }
 
@@ -40,12 +83,22 @@ onMounted(() => {
   setInterval(updateTime, 1000)
   loadWeather()
   loadHitokoto()
+  window.addEventListener('storage', handleStorageChange)
+  // 同时监听本地设置变化（使用定时器检查）
+  let lastSettings = localStorage.getItem('mornstart_settings')
+  setInterval(() => {
+    const currentSettings = localStorage.getItem('mornstart_settings')
+    if (currentSettings !== lastSettings) {
+      lastSettings = currentSettings
+      handleStorageChange()
+    }
+  }, 500)
 })
 </script>
 
 <template>
   <div class="time">{{ time }}</div>
-  <div class="date-row">
+  <div v-if="!hideDate" class="date-row">
     <div class="date-weather">
       <div class="date">{{ date }}</div>
       <div class="weather" v-if="weather">
@@ -54,8 +107,8 @@ onMounted(() => {
         </span>
       </div>
     </div>
-    <div class="hitokoto">
-      <div class="hitokoto-text">{{ hitokotoText || '加载中...' }}</div>
+    <div v-if="hitokotoText" class="hitokoto">
+      <div class="hitokoto-text">{{ hitokotoText }}</div>
     </div>
   </div>
 </template>
@@ -81,7 +134,7 @@ onMounted(() => {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  gap: 8px;
+  gap: 4px;
 }
 
 .date-weather {
