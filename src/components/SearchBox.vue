@@ -235,6 +235,7 @@ defineExpose({
 .search-wrapper {
   position: relative;
   width: 600px;
+  max-width: 100%;
 }
 
 .search {
@@ -247,6 +248,20 @@ defineExpose({
   width: 100%;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   height: 44px;
+}
+
+@media (max-width: 768px) {
+  .search-wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .search:hover {
