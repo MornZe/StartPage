@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 
 interface SearchEngine {
   name: string
@@ -45,8 +46,8 @@ const switchEngine = (index: number) => {
   emit('switch', index)
 }
 
-const setEngineRef = (el: HTMLElement | null, index: number) => {
-  engineRefs.value[index] = el
+const setEngineRef = (el: Element | ComponentPublicInstance | null, index: number) => {
+  engineRefs.value[index] = (el as HTMLElement | null)
 }
 </script>
 

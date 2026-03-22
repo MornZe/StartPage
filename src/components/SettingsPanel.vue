@@ -5,6 +5,8 @@ import { Icon } from '@iconify/vue'
 interface Settings {
   showHitokoto: boolean
   customHitokoto: string
+  showWeather: boolean
+  weatherCounty: string
   showCustomBg: boolean
   bgType: 'url' | 'file'
   bgUrl: string

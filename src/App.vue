@@ -42,6 +42,8 @@ const searchBoxRef = ref<InstanceType<typeof SearchBox> | null>(null)
 const defaultSettings: Settings = {
   showHitokoto: true,
   customHitokoto: '',
+  showWeather: true,
+  weatherCounty: '',
   showCustomBg: false,
   bgType: 'url',
   bgUrl: '',
